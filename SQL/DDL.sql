@@ -624,7 +624,7 @@ ALTER TABLE venta ADD CONSTRAINT curpcajeroD1 CHECK(CHAR_LENGTH(curpcajero)=18);
 ALTER TABLE venta ADD CONSTRAINT curpcajeroD2 CHECK(curpcajero SIMILAR TO '[A-Z]{4}[0-9]{6}[A-Z]{6}[0-9]{2}');
 
 ALTER TABLE venta ALTER COLUMN fechaventa SET NOT NULL;
-ALTER TABLE venta ADD CONSTRAINT fechaventa1 CHECK(EXTRACT (years FROM age(CURRENT_DATE,fechaventa))>=23);
+--ALTER TABLE venta ADD CONSTRAINT fechaventa1 CHECK(EXTRACT (years FROM age(CURRENT_DATE,fechaventa))>=23);
 ALTER TABLE venta ALTER COLUMN ticket SET NOT NULL;
 ALTER TABLE venta ADD CONSTRAINT ticket1 CHECK(CHAR_LENGTH(ticket)=10);
 ALTER TABLE venta ADD CONSTRAINT formapago1 CHECK(formapago <>'');
@@ -662,7 +662,7 @@ comment on constraint curpclienteD1 on venta is 'Restriccion check que nos asegu
 comment on constraint curpclienteD2 on venta is 'Restriccion check que nos asegura que la cadena sea de la forma de un curp';
 comment on constraint curpcajeroD1 on venta is 'Restriccion check que nos asegura que la cadena sea de longitud 18';
 comment on constraint curpcajeroD2 on venta is 'Restriccion check que nos asegura que la cadena sea de la forma de un curp';
-comment on constraint fechaventa1 on venta is 'Restriccion check que nos asegura que la fecha no sea superior a la actual';
+--comment on constraint fechaventa1 on venta is 'Restriccion check que nos asegura que la fecha no sea superior a la actual';
 comment on constraint ticket1 on venta is 'Restriccion check que nos asegura que la longitud no sea mayor a 10';
 comment on constraint formapago1 on venta is 'Restriccion check que nos asegura que formapago no sea la cadena vacía';
 
@@ -1050,3 +1050,4 @@ COMMENT ON CONSTRAINT idproductoe1 ON vendere IS 'Restricción que valida que el
 COMMENT ON CONSTRAINT cantidadproducto ON vendere IS 'Restricción que valida que la cantidad de productos vendidos esté entre 1 y 99999.';
 COMMENT ON CONSTRAINT vendere_fkey1 ON vendere IS 'Restricción que establece una llave foránea hacia la tabla venta, en la columna idventa.';
 COMMENT ON CONSTRAINT vendere_fkey2 ON vendere IS 'Restricción que establece una llave foránea hacia la tabla electronica, en la columna idproductoe.';
+
