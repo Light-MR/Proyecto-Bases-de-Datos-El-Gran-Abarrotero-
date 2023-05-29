@@ -8615,7 +8615,6 @@ INSERT INTO cliente(curpcliente,nombrecliente,paternocliente,maternocliente,fech
 INSERT INTO cliente(curpcliente,nombrecliente,paternocliente,maternocliente,fechanacimiento,estado,ciudad,colonia,calle,numero,codigopostal) VALUES ('FGFU588677RNTPGD12','Aryn','Patty','Thurlbourne','1988-05-25','San Luis Potosi','Citlaltepetl','Citlaltepec','Fairview',823,'16795');
 INSERT INTO cliente(curpcliente,nombrecliente,paternocliente,maternocliente,fechanacimiento,estado,ciudad,colonia,calle,numero,codigopostal) VALUES ('GCQI144552MOADFT76','Albertine','Zappel','Annear','1999-09-12','Michoacán','Macuspana','Macuspana','Maple',2,'41723');
 INSERT INTO cliente(curpcliente,nombrecliente,paternocliente,maternocliente,fechanacimiento,estado,ciudad,colonia,calle,numero,codigopostal) VALUES ('XRXG560043ALLBZV32','Jacques','Marvin','Benedettini','1994-04-21','Jalisco','Santa Catarina Mechoacan','Santa Catarina Mechoacan','Karstens',4200,'25206');
-INSERT INTO cliente(curpcliente,nombrecliente,paternocliente,maternocliente,fechanacimiento,estado,ciudad,colonia,calle,numero,codigopostal) VALUES ('DBZO497728JIMRTX54','Smitty','Stitcher','Fanthom','1984-08-04','Chihuahua','Heroica Villa Tezoatlan de Segura y Luna, Cuna de la Independencia de Oaxaca','Heroica Villa Tezoatlan de Segura y Luna, Cuna de la Independencia de Oaxaca','Corry',04473,'07728');
 INSERT INTO cliente(curpcliente,nombrecliente,paternocliente,maternocliente,fechanacimiento,estado,ciudad,colonia,calle,numero,codigopostal) VALUES ('YHVY970948GDGUED80','Bryn','Townley','Bowart','1989-01-20','Sinaloa','San Pedro y San Pablo Ayutla','San Pedro y San Pablo Ayutla','Jana',05,'78232');
 INSERT INTO cliente(curpcliente,nombrecliente,paternocliente,maternocliente,fechanacimiento,estado,ciudad,colonia,calle,numero,codigopostal) VALUES ('JCRH000234TSJKVR95','Dante','Hayman','Cleall','1983-11-07','Chiapas','Tlanchinol','Tlanchinol','Saint Paul',52177,'43119');
 INSERT INTO cliente(curpcliente,nombrecliente,paternocliente,maternocliente,fechanacimiento,estado,ciudad,colonia,calle,numero,codigopostal) VALUES ('PKQB727458HYMCZG21','Creigh','O''Cahsedy','Marcroft','1969-12-06','Sonora','San Juan Ihualtepec','San Juan Ihualtepec','Lillian',853,'91984');
@@ -9621,7 +9620,6 @@ INSERT INTO telefonocliente(curpcliente,telefono) VALUES ('AFYM001767DNYDUT99','
 INSERT INTO telefonocliente(curpcliente,telefono) VALUES ('FGFU588677RNTPGD12','1868523744');
 INSERT INTO telefonocliente(curpcliente,telefono) VALUES ('GCQI144552MOADFT76','8223861726');
 INSERT INTO telefonocliente(curpcliente,telefono) VALUES ('XRXG560043ALLBZV32','2176400966');
-INSERT INTO telefonocliente(curpcliente,telefono) VALUES ('DBZO497728JIMRTX54','2950001773');
 INSERT INTO telefonocliente(curpcliente,telefono) VALUES ('YHVY970948GDGUED80','3247278178');
 INSERT INTO telefonocliente(curpcliente,telefono) VALUES ('JCRH000234TSJKVR95','9146441623');
 INSERT INTO telefonocliente(curpcliente,telefono) VALUES ('PKQB727458HYMCZG21','8842781300');
@@ -10627,7 +10625,6 @@ INSERT INTO correocliente(curpcliente,correo) VALUES ('AFYM001767DNYDUT99','flab
 INSERT INTO correocliente(curpcliente,correo) VALUES ('FGFU588677RNTPGD12','jshepeardjv@jimdo.com');
 INSERT INTO correocliente(curpcliente,correo) VALUES ('GCQI144552MOADFT76','chughsonjw@hugedomains.com');
 INSERT INTO correocliente(curpcliente,correo) VALUES ('XRXG560043ALLBZV32','jbrantonjx@bigcartel.com');
-INSERT INTO correocliente(curpcliente,correo) VALUES ('DBZO497728JIMRTX54','mholliganjy@shop-pro.jp');
 INSERT INTO correocliente(curpcliente,correo) VALUES ('YHVY970948GDGUED80','ffozzardjz@cdbaby.com');
 INSERT INTO correocliente(curpcliente,correo) VALUES ('JCRH000234TSJKVR95','mballaamk0@seattletimes.com');
 INSERT INTO correocliente(curpcliente,correo) VALUES ('PKQB727458HYMCZG21','jhassardk1@shop-pro.jp');
