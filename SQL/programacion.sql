@@ -5,10 +5,12 @@ $$
 declare
 fila record;
 cur_electronica cursor for select * from POSEERE where IDSUCURSAL=S;
+-- variable stock en la cual iremos acumulando la cantidad en stock de cada producto.
 stock int := 0;
 begin 
 open cur_electronica;
 fetch cur_electronica into fila;
+-- realizamos la operación de acumulación mientras aún haya filas.
 while (found) loop
 	  stock := stock + fila.CANTIDADESTOCK;
 	  fetch cur_electronica into fila;  
@@ -19,18 +21,21 @@ $$
 language plpgsql;	 
 
 --call totalstock('S-00007');
+
 -- Verificar que los produtos perecederos en la sucursal 1 no caduquen en menos de 1 semana a partir de la fecha en que son 
 --agregados.
-
 create or replace function check_cad_suc1() returns trigger
 as
 $$
 declare 
+--variable que guardará la fecha de caducidad del producto.
 fcc date;
 begin 
     if(TG_OP='INSERT') then 
 	    select fechacadcorta into fcc from perecedero natural join POSEERP
 	    where idproductop = NEW.idproductop;
+		--si la el producto es agregado a la sucursal S-0001, verificamos que su fecha de caducidad 
+		--supere los 7 días desde que fue agregado.
 		if (NEW.IDSUCURSAL='S-00001' and fcc<=(current_date + integer '7')) then
 		    RAISE EXCEPTION 'la caducidad debe ser mayor a 7 días contando desde que se agrega el producto.';
 		end if;
@@ -39,7 +44,7 @@ begin
 end;
 $$
 language plpgsql;
-
+--realizamos pruebas.
 create trigger cad_suc1
 after insert on POSEERP
 for each row
