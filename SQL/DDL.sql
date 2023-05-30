@@ -624,7 +624,7 @@ ALTER TABLE venta ADD CONSTRAINT curpcajeroD1 CHECK(CHAR_LENGTH(curpcajero)=18);
 ALTER TABLE venta ADD CONSTRAINT curpcajeroD2 CHECK(curpcajero SIMILAR TO '[A-Z]{4}[0-9]{6}[A-Z]{6}[0-9]{2}');
 
 ALTER TABLE venta ALTER COLUMN fechaventa SET NOT NULL;
---ALTER TABLE venta ADD CONSTRAINT fechaventa1 CHECK(EXTRACT (years FROM age(CURRENT_DATE,fechaventa))>=23);
+--ALTER TABLE venta ADD CONSTRAINT fechaventa1 CHECK(CURRENT_DATE => fechaventa);
 ALTER TABLE venta ALTER COLUMN ticket SET NOT NULL;
 ALTER TABLE venta ADD CONSTRAINT ticket1 CHECK(CHAR_LENGTH(ticket)=10);
 ALTER TABLE venta ADD CONSTRAINT formapago1 CHECK(formapago <>'');
