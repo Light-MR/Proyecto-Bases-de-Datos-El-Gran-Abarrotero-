@@ -69,3 +69,15 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+-- Funcion que devuelve una tabla con la cantidad de ventas por cajero en una sucursal
+CREATE or replace FUNCTION cantidad_ventas(idsucursalC CHAR(7))
+RETURNS table (idsucursal CHAR(7), curpcajero CHAR(18), numeroventas int)
+as 
+$$
+    select idsucursal, curpcajero, count(*) as numeroventas
+	from venta
+	where idsucursal = idsucursalC
+	group by idsucursal, curpcajero;
+$$
+language sql;
