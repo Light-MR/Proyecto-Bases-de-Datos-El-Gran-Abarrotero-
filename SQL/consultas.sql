@@ -111,3 +111,23 @@ from venta
 where idsucursal like 'S-0001%' and  fechaventa between '2023-05-01' and '2023-05-31' and formapago = 'EFECTIVO';
 
 -- __________________________________________________________________
+
+---Cuales encargados nacieron antes de 1990
+
+select *
+FROM encargado
+WHERE fechanacimiento < '1990-01-01';
+
+----Encargados que nacieron en Nuevo Leon
+
+SELECT *
+FROM encargado
+WHERE estado = 'Nuevo Leon';
+
+----Sucursales ordenadas por nombre
+
+SELECT *
+FROM sucursal
+ORDER BY nombre;
+
+-- __________________________________________________________________
