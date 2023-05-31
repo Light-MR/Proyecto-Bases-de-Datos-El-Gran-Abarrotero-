@@ -80,3 +80,34 @@ GROUP BY fechaventa
 ORDER BY fechaventa;
 
 -- ________________________________________________________________________
+
+-- El correo de los cajeros que vendieron en la primera mitad del año en la sucursal del Distrito Federal
+select idsucursal, correo, fechaventa
+from correocajero
+natural join venta
+natural join sucursal
+where estado = 'Distrito Federal' and fechaventa between '2023-01-01' and '2023-06-30';
+
+-- Numero de ventas de cada cajero en la sucursal S-00001
+select idsucursal, curpcajero, count(*) as numeroventas
+from venta
+where idsucursal = 'S-00001'
+group by idsucursal, curpcajero; 
+
+-- Información de los gerentes que tienen entre 20 y 30 años
+select *
+from gerente
+where fechanacimiento between '1993-05-31' and '2003-05-31';
+
+-- Numero de telefono de los cajeros que realizaron ventas en las primeras 9 sucursales en el mes de mayo
+select curpcajero, telefono
+from venta
+natural join telefonocajero
+where idsucursal like 'S-0000%' and  fechaventa between '2023-05-01' and '2023-05-31';
+
+-- Cajeros que cobraron en efectivo en las sucursales 10 a 15 en el mes de mayo
+select curpcajero, idsucursal
+from venta
+where idsucursal like 'S-0001%' and  fechaventa between '2023-05-01' and '2023-05-31' and formapago = 'EFECTIVO';
+
+-- __________________________________________________________________
