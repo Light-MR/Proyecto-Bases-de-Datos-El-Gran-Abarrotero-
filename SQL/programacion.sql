@@ -54,4 +54,18 @@ insert into perecedero (idproductop, nombre, marca, precio, cantidad, descripcio
 
 insert into POSEERP (IDSUCURSAL, IDPRODUCTOP, CANTIDADESTOCK) values ('S-00001', 'P-00000003', 368);
 	
-
+-- Funcion que nos da el numero de encargados de una sucursal
+CREATE or replace FUNCTION cantidad_encargados(idsucursal_par CHAR(7))
+RETURNS INTEGER
+AS $$
+DECLARE
+    cantidad INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO cantidad
+    FROM encargado
+    WHERE idsucursal = idsucursal_par;
+    
+    RETURN cantidad;
+END;
+$$
+LANGUAGE plpgsql;
