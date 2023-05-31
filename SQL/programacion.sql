@@ -81,3 +81,73 @@ $$
 	group by idsucursal, curpcajero;
 $$
 language sql;
+
+
+
+-- ____________________________________________________________________________________________________________
+
+-- Disparador: No dejara actualizar la curp
+CREATE OR REPLACE FUNCTION restringir_actualizacion_curp() RETURNS TRIGGER AS $$
+BEGIN
+  IF OLD.curpcliente <> NEW.curpcliente THEN
+    RAISE EXCEPTION 'No se puede cambiar la CURP de un cliente';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER restringir_actualizacion_curp_trigger
+BEFORE UPDATE OF curpcliente ON cliente
+FOR EACH ROW
+EXECUTE PROCEDURE restringir_actualizacion_curp();
+
+-- Prueba
+-- UPDATE cliente
+-- SET curpcliente = 'CURP098765FGGLAB56'
+-- WHERE curpcliente = 'WFMP034982PYNOBI40';
+
+
+-- Procedimiento almacenado para calcular el total de ventas (dinero) de un cajero en un día específico.
+DROP PROCEDURE IF EXISTS calcula_cajero_ventas(CHAR(18), DATE);
+
+
+CREATE OR REPLACE PROCEDURE calcula_cajero_ventas (
+  _curpcajero CHAR(18),
+  _fecha DATE
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+  total_electronica INT;
+  total_noperecedero INT;
+  total_perecedero INT;
+  total_ventas INT;
+BEGIN
+  SELECT COALESCE(SUM(e.precio * ve.cantidadproducto), 0) 
+  INTO total_electronica
+  FROM vendere ve 
+  JOIN electronica e ON ve.idproductoe = e.idproductoe 
+  WHERE ve.idventa IN (SELECT idventa FROM venta WHERE curpcajero = _curpcajero AND fechaventa = _fecha);
+
+  SELECT COALESCE(SUM(np.precio * vnp.cantidadproducto), 0) 
+  INTO total_noperecedero
+  FROM vendernp vnp 
+  JOIN noperecedero np ON vnp.idproductonp = np.idproductonp 
+  WHERE vnp.idventa IN (SELECT idventa FROM venta WHERE curpcajero = _curpcajero AND fechaventa = _fecha);
+
+  SELECT COALESCE(SUM(p.precio * vp.cantidadproducto), 0) 
+  INTO total_perecedero
+  FROM venderp vp 
+  JOIN perecedero p ON vp.idproductop = p.idproductop 
+  WHERE vp.idventa IN (SELECT idventa FROM venta WHERE curpcajero = _curpcajero AND fechaventa = _fecha);
+
+  --Calculando el total de ventas sumando las tres categorías
+  total_ventas := total_electronica + total_noperecedero + total_perecedero;
+
+  RAISE NOTICE 'Curp Cajero: %, Fecha: %, Total Ventas Electronica $: %, Total Ventas No Perecedero $: %, Total Ventas Perecedero $: %, Total Ventas $: %', _curpcajero, _fecha, total_electronica, total_noperecedero, total_perecedero, total_ventas;
+END;
+$$;
+-- prueba
+CALL calcula_cajero_ventas('CCPX773939HDSYII53', '2023/09/22');
+
+
+
