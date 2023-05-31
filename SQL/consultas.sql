@@ -130,4 +130,17 @@ SELECT *
 FROM sucursal
 ORDER BY nombre;
 
+---Lista de encargados ordenados por su primer apellido
+
+SELECT *
+FROM encargado
+ORDER BY paternocajero ASC;
+
+---Lista de sucursales ordenandas por cuantos encargados tiene de manera descendiente
+
+SELECT idsucursal, COUNT(*) AS cantidad_encargados
+FROM encargado
+GROUP BY idsucursal
+ORDER BY cantidad_encargados DESC;
+
 -- __________________________________________________________________
