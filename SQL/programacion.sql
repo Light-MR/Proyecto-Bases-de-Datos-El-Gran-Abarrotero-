@@ -181,3 +181,21 @@ $$;
 -- prueba
 CALL calcula_cajero_ventas('CCPX773939HDSYII53', '2023/09/22');
 
+-- Funcion que nos da el numero de encargados de una sucursal
+CREATE FUNCTION cantidad_encargados(idsucursal_par CHAR(7))
+RETURNS INTEGER
+AS $$
+DECLARE
+    cantidad INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO cantidad
+    FROM encargado
+    WHERE idsucursal = idsucursal_par;
+    
+    RETURN cantidad;
+END;
+$$
+LANGUAGE plpgsql;
+
+CALL cantidad_encargados('S-00002')
+
