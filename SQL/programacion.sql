@@ -199,3 +199,29 @@ LANGUAGE plpgsql;
 
 CALL cantidad_encargados('S-00002')
 
+-- Evitar el borrado de un cajero en caso de que no haya otro
+
+CREATE TRIGGER evitar_eliminacion_c
+BEFORE DELETE ON cajero
+FOR EACH ROW
+BEGIN
+    DECLARE num_cajeros INT;
+
+    -- Verificar si hay otros cajeros en la misma sucursal
+    SELECT COUNT(*)
+    INTO num_cajeros
+    FROM cajero
+    WHERE idsucursal = OLD.idsucursal
+      AND curpcajero != OLD.curpcajero;
+
+    -- Si no hay otro cajero, evitar la eliminación del cajero
+    IF num_cajeros = 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'No se puede eliminar al unico cajero de la sucursal.';
+    END IF;
+END;
+
+--Prueba 
+DELETE FROM cajero WHERE curpcajero = ''KUQN504726AYRFCB98'';
+
+
