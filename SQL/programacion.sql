@@ -242,3 +242,172 @@ where curpcliente in
 	where total_compras = 0);
 
 --______________________________________________________________________________________________
+-- Disparador :Verificar la disponibilidad de productos al insertar una nueva venta en la tabla vendernp, venderp, vendere
+-- verificar que la cantidad de producto a vender no exceda la cantidad en stock en las tablas poseerp, poseernp y poseere.
+CREATE OR REPLACE FUNCTION verificar_disponibilidad_np()
+RETURNS TRIGGER
+AS $$
+DECLARE
+    cantidad_vendida INT;
+    cantidad_en_stock INT;
+    id_sucursal CHAR(7);
+BEGIN
+    cantidad_vendida := NEW.cantidadproducto;
+
+    -- Obtener el idsucursal de la tabla venta
+    SELECT idsucursal INTO id_sucursal
+    FROM venta
+    WHERE idventa = NEW.idventa;
+
+    SELECT cantidadestock INTO cantidad_en_stock
+    FROM poseernp
+    WHERE idsucursal = id_sucursal AND idproductonp = NEW.idproductonp;
+
+    IF cantidad_vendida > cantidad_en_stock THEN
+        RAISE EXCEPTION 'No hay suficientes productos en stock.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS verificar_disponibilidad_np_trigger ON vendernp;
+CREATE TRIGGER verificar_disponibilidad_np_trigger
+BEFORE INSERT
+ON vendernp
+FOR EACH ROW
+EXECUTE PROCEDURE verificar_disponibilidad_np();
+
+-- Disparador :Verificar la disponibilidad de productos al insertar una nueva venta en la tabla venderp
+
+CREATE OR REPLACE FUNCTION verificar_disponibilidad_p()
+RETURNS TRIGGER
+AS $$
+DECLARE
+    cantidad_vendida INT;
+    cantidad_en_stock INT;
+    id_sucursal CHAR(7);
+BEGIN
+    cantidad_vendida := NEW.cantidadproducto;
+
+    -- Obtener el idsucursal de la tabla venta
+    SELECT idsucursal INTO id_sucursal
+    FROM venta
+    WHERE idventa = NEW.idventa;
+
+    SELECT cantidadestock INTO cantidad_en_stock
+    FROM poseerp
+    WHERE idsucursal = id_sucursal AND idproductop = NEW.idproductop;
+
+    IF cantidad_vendida > cantidad_en_stock THEN
+        RAISE EXCEPTION 'No hay suficientes productos en stock.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS verificar_disponibilidad_p_trigger ON venderp;
+CREATE TRIGGER verificar_disponibilidad_p_trigger
+BEFORE INSERT
+ON venderp
+FOR EACH ROW
+EXECUTE PROCEDURE verificar_disponibilidad_p();
+
+
+-- Disparador :Verificar la disponibilidad de productos al insertar una nueva venta en la tabla vendere
+
+CREATE OR REPLACE FUNCTION verificar_disponibilidad_e()
+RETURNS TRIGGER
+AS $$
+DECLARE
+    cantidad_vendida INT;
+    cantidad_en_stock INT;
+    id_sucursal CHAR(7);
+BEGIN
+    cantidad_vendida := NEW.cantidadproducto;
+
+    -- Obtener el idsucursal de la tabla venta
+    SELECT idsucursal INTO id_sucursal
+    FROM venta
+    WHERE idventa = NEW.idventa;
+
+    SELECT cantidadestock INTO cantidad_en_stock
+    FROM poseere
+    WHERE idsucursal = id_sucursal AND idproductoe = NEW.idproductoe;
+
+    IF cantidad_vendida > cantidad_en_stock THEN
+        RAISE EXCEPTION 'No hay suficientes productos en stock.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS verificar_disponibilidad_e_trigger ON vendere;
+CREATE TRIGGER verificar_disponibilidad_e_trigger
+BEFORE INSERT
+ON vendere
+FOR EACH ROW
+EXECUTE PROCEDURE verificar_disponibilidad_e();
+
+
+-- probar 
+--insert into ELECTRONICA (idproductoe, nombre, marca, precio, cantidad, descripcion, categoria, consumowatts) values ('E-51148575', 'PROYECTOR MAX', 'STEREN', 7357, 80, 'LÍNEA MARRÓN', 'EQUIPO DE INFORMÁTICA Y TELECOMUNICACIONES', 1000);
+--insert into POSEERE (IDSUCURSAL, IDPRODUCTOE, CANTIDADESTOCK) values ('S-00005', 'E-51148575', 212);
+--insert into VENTA (IDVENTA, IDSUCURSAL, CURPCLIENTE, CURPCAJERO, FECHAVENTA, TICKET, FORMAPAGO) values ('V-22256667', 'S-00005', 'POXG122017UIVUDU28', 'LYMW190541NOCQMR49', '2023/02/17', 'oypztyklac', 'TARJETA');
+-- Al ejecutar la linea siguiente se enviara un mensaje de error  'No hay suficientes productos en stock.'
+--insert into VENDERE (IDVENTA, IDPRODUCTOE, CANTIDADPRODUCTO) values ('V-22256667', 'E-51148575', 378);
+
+
+-- Procedimiento para: Obtener el total de ventas de cada producto en una sucursal específica:
+DROP PROCEDURE IF EXISTS  total_ventas_sucursal(idsucursal CHAR(7));
+CREATE OR REPLACE PROCEDURE total_ventas_sucursal(idsucursal CHAR(7))
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    producto CHAR(10);
+    total INT;
+BEGIN
+    FOR producto IN (SELECT DISTINCT idproductop FROM venderp)
+    LOOP
+        SELECT SUM(cantidadproducto) INTO total
+        FROM venderp
+        WHERE idproductop = producto AND idsucursal = idsucursal;
+
+        RAISE NOTICE 'El total de ventas del producto % en la sucursal % es %.', producto, idsucursal, total;
+    END LOOP;
+END;
+$$;
+
+--Prueba
+-- CALL total_ventas_sucursal('S-00004');
+
+
+-- Procedimiento: Obtener la cantidad total de productos en stock de cada categoría (electronica) en una sucursal específica:
+
+DROP PROCEDURE IF EXISTS  total_productos_categoria_sucursal(idsucursal CHAR(7));
+
+CREATE OR REPLACE PROCEDURE total_productos_categoria_sucursal(sucursal_id CHAR(7))
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    categoria_producto VARCHAR(50);
+    total INT;
+BEGIN
+    FOR categoria_producto IN (SELECT DISTINCT categoria FROM electronica)
+    LOOP
+        SELECT SUM(cantidadestock) INTO total
+        FROM poseere
+        WHERE idsucursal = sucursal_id AND idproductoe IN (SELECT idproductoe FROM electronica WHERE categoria = categoria_producto);
+
+        RAISE NOTICE 'Cantidad total de productos de categoría % en sucursal % es %.', categoria_producto, sucursal_id, total;
+    END LOOP;
+END;
+$$;
+
+-- Prueba 
+-- call total_productos_categoria_sucursal('S-00004')
