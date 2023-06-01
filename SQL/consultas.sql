@@ -35,8 +35,7 @@ LEFT JOIN venderp ON venderp.idventa = venta.idventa
 LEFT JOIN vendernp ON vendernp.idventa = venta.idventa
 LEFT JOIN vendere ON vendere.idventa = venta.idventa
 GROUP BY sucursal.idsucursal, sucursal.nombre
-ORDER BY total_vendidos DESC
---LIMIT 1;
+ORDER BY total_vendidos DESC;
 
 
 --10 Clientes que han realizado el mayor numero de compras(ventas)
@@ -134,7 +133,7 @@ ORDER BY nombre;
 
 SELECT *
 FROM encargado
-ORDER BY paternocajero ASC;
+ORDER BY paternoencargado ASC;
 
 ---Lista de sucursales ordenandas por cuantos encargados tiene de manera descendiente
 
