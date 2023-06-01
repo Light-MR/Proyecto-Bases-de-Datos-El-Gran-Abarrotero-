@@ -69,7 +69,7 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
-
+-- _____________________________________________________________________________________________
 -- Funcion que devuelve una tabla con la cantidad de ventas por cajero en una sucursal
 CREATE or replace FUNCTION cantidad_ventas(idsucursalC CHAR(7))
 RETURNS table (idsucursal CHAR(7), curpcajero CHAR(18), numeroventas int)
@@ -81,8 +81,40 @@ $$
 	group by idsucursal, curpcajero;
 $$
 language sql;
+--Prueba
+select* 
+from  cantidad_ventas('S-00008');
 
 
+-- Disparador para no permitir insertar ventas que no sean del día actual
+-- Nota: Solo deberá activarse una vez poblada la base.
+create or replace function checa_fecha_venta() returns trigger 
+as
+$$
+declare 
+	fv date;
+begin
+	if(TG_OP = 'INSERT') then 
+		select fechaventa into fv from venta
+		where idventa = new.idventa;
+		if(fv != current_date ) then
+			raise exception 'Solo se pueden agregar ventas del día actual';
+		end if;
+	end if;
+	return null;
+end;
+$$
+language plpgsql;
+
+create trigger checa_fecha_venta
+after insert on venta
+for each row
+execute procedure checa_fecha_venta();
+-- Pruebas
+-- insert rechazado
+--insert into VENTA (IDVENTA, IDSUCURSAL, CURPCLIENTE, CURPCAJERO, FECHAVENTA, TICKET, FORMAPAGO) values ('V-12595307', 'S-00001', 'LWBX730531SOLWBE79', 'VCWN197579LMQCKJ11', '2023/04/06', 'ztlrumggdk', 'EFECTIVO');
+-- insert aceptado (depende del dìa, por obvias razones)
+--insert into VENTA (IDVENTA, IDSUCURSAL, CURPCLIENTE, CURPCAJERO, FECHAVENTA, TICKET, FORMAPAGO) values ('V-12595307', 'S-00001', 'LWBX730531SOLWBE79', 'VCWN197579LMQCKJ11', '2023/05/31', 'ztlrumggdk', 'EFECTIVO');
 
 -- ____________________________________________________________________________________________________________
 
@@ -148,6 +180,4 @@ END;
 $$;
 -- prueba
 CALL calcula_cajero_ventas('CCPX773939HDSYII53', '2023/09/22');
-
-
 
