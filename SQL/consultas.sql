@@ -144,3 +144,61 @@ GROUP BY idsucursal
 ORDER BY cantidad_encargados DESC;
 
 -- __________________________________________________________________
+-- Existencias de productos STEREO por sucursal
+SELECT sucursal.nombre AS nombre_sucursal, SUM(poseere.cantidadestock) AS cantidad
+FROM sucursal
+JOIN poseere ON sucursal.idsucursal = poseere.idsucursal
+JOIN electronica ON electronica.idproductoe = poseere.idproductoe
+WHERE electronica.nombre = 'STEREO'
+GROUP BY sucursal.nombre;
+--Los clientes que han comprado al menos una vez de cada categoría de productos.
+SELECT cliente.*
+FROM cliente
+WHERE (
+    SELECT COUNT(DISTINCT idproductoe)
+    FROM venta JOIN vendere ON venta.idventa = vendere.idventa
+    WHERE venta.curpcliente = cliente.curpcliente
+) > 0
+AND (
+    SELECT COUNT(DISTINCT idproductonp)
+    FROM venta JOIN vendernp ON venta.idventa = vendernp.idventa
+    WHERE venta.curpcliente = cliente.curpcliente
+) > 0
+AND (
+    SELECT COUNT(DISTINCT idproductop)
+    FROM venta JOIN venderp ON venta.idventa = venderp.idventa
+    WHERE venta.curpcliente = cliente.curpcliente
+) > 0;
+--Sucursales con más ventas durante los fines de semana:
+
+SELECT sucursal.idsucursal, sucursal.nombre, COUNT(*) as ventas_finde
+FROM venta
+JOIN sucursal ON venta.idsucursal = sucursal.idsucursal
+WHERE EXTRACT(ISODOW FROM venta.fechaventa) IN (6, 7)
+GROUP BY sucursal.idsucursal
+ORDER BY ventas_finde DESC
+LIMIT 10;
+--Los 10 productos más vendidos de cada categoría (perecedero, no perecedero, electrónico):
+SELECT * FROM (
+  SELECT 'perecedero' AS categoria, nombre, SUM(cantidadproducto) AS cantidad_vendida
+  FROM venderp JOIN perecedero ON venderp.idproductop = perecedero.idproductop
+  GROUP BY nombre
+  ORDER BY cantidad_vendida DESC
+  LIMIT 10
+) AS perecedero_max
+UNION ALL
+SELECT * FROM (
+  SELECT 'noperecedero' AS categoria, nombre, SUM(cantidadproducto) AS cantidad_vendida
+  FROM vendernp JOIN noperecedero ON vendernp.idproductonp = noperecedero.idproductonp
+  GROUP BY nombre
+  ORDER BY cantidad_vendida DESC
+  LIMIT 10
+) AS noperecedero_max
+UNION ALL
+SELECT * FROM (
+  SELECT 'electronica' AS categoria, nombre, SUM(cantidadproducto) AS cantidad_vendida
+  FROM vendere JOIN electronica ON vendere.idproductoe = electronica.idproductoe
+  GROUP BY nombre
+  ORDER BY cantidad_vendida DESC
+  LIMIT 10
+) AS electronica_max;
