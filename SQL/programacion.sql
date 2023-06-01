@@ -224,4 +224,21 @@ END;
 --Prueba 
 DELETE FROM cajero WHERE curpcajero = ''KUQN504726AYRFCB98'';
 
+--______________________________________________________________________________________________
 
+-- Actualización de datos
+-- Queremos eliminar de la base de datos aquellas personas que concluyeron el registro como cliente
+-- pero que no concluyeron ninguna compra, puesto que no nos interesa guardar datos de personas que no son clientes.
+delete from cliente
+where curpcliente in
+	(select curpcliente
+	from
+	(SELECT cliente.curpcliente, cliente.nombrecliente, cliente.paternocliente, cliente.maternocliente,
+	       COUNT(venta.idventa) as total_compras
+	FROM cliente
+	LEFT JOIN venta ON venta.curpcliente = cliente.curpcliente
+	GROUP BY cliente.curpcliente, cliente.nombrecliente, cliente.paternocliente, cliente.maternocliente
+	ORDER BY total_compras asc) as Ventas
+	where total_compras = 0);
+
+--______________________________________________________________________________________________
